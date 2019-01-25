@@ -1,3 +1,4 @@
+import Player from 'object/Player'
 
 function create2DArray(n, m, defaultVal = 0) {
     let level = []
@@ -24,6 +25,37 @@ export class GameScene extends Phaser.Scene {
     create() {
         let level = create2DArray(100, 100, 10)
 
+        this.anims.create({
+            key: 'player-still',
+            frames: [ {  key: 'characters', frame: 7 } ],
+            frameRate: 10,
+            repeat: -1,
+        })
+        this.anims.create({
+            key: 'player-down',
+            frames: this.anims.generateFrameNumbers('characters', {start: 6, end: 8}),
+            frameRate: 10,
+            repeat: -1,
+        })
+        this.anims.create({
+            key: 'player-left',
+            frames: this.anims.generateFrameNumbers('characters', {start: 18, end: 20}),
+            frameRate: 10,
+            repeat: -1,
+        })
+        this.anims.create({
+            key: 'player-right',
+            frames: this.anims.generateFrameNumbers('characters', {start: 30, end: 32}),
+            frameRate: 10,
+            repeat: -1,
+        })
+        this.anims.create({
+            key: 'player-up',
+            frames: this.anims.generateFrameNumbers('characters', {start: 42, end: 44}),
+            frameRate: 10,
+            repeat: -1,
+        })
+
         let map = this.make.tilemap({
             data: level,
             tileWidth: 16,
@@ -38,7 +70,7 @@ export class GameScene extends Phaser.Scene {
 
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
-        let player = this.physics.add.sprite(5, 5, 'characters')
+        let player = this.physics.add.sprite(0, 0, 'characters')
         player.setCollideWorldBounds(true)
         this.cameras.main.startFollow(player, true, 0.1, 0.1)
 
@@ -49,19 +81,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     update() {
-        let player = this.e.player;
-
-        player.setVelocity(0)
-        if (this.e.cursors.left.isDown) {
-            player.setVelocityX(-200)
-        } else if (this.e.cursors.right.isDown) {
-            player.setVelocityX(200)
-        }
-
-        if (this.e.cursors.up.isDown) {
-            player.setVelocityY(-200);
-        } else if (this.e.cursors.down.isDown) {
-            player.setVelocityY(200);
-        }
+        Player.updatePlayer(this.e.player, this.e.cursors)
     }
 }

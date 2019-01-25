@@ -3,6 +3,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack')
 
 module.exports = {
+    resolve: {
+        root: path.resolve('./src')
+    },
     entry: {
         app: path.resolve(__dirname, 'src/index.js'),
         vendor: ['phaser'],
@@ -11,7 +14,9 @@ module.exports = {
         path: path.resolve(__dirname, 'build'),
         filename: '[name].bundle.js',
     },
-
+    resolve: {
+        modules: [path.resolve(__dirname, "src"), "node_modules"],
+    },
     module: {
         rules: [
             {
