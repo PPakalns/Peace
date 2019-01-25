@@ -2,6 +2,9 @@
   "name": "Peace",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --inline --hot --no-info"
+  },
   "devDependencies": {
     "babel-core": "6",
     "babel-loader": "^7.0.0",
