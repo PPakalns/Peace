@@ -12,7 +12,9 @@ function create2DArray(n, m, defaultVal = 0) {
 }
 
 export class GameScene extends Phaser.Scene {
-
+    constructor() {
+        super({key: 'gameScene'} );
+    }
     preload() {
         this.load.image('tiles', 'assets/basictiles.png');
         this.load.spritesheet('characters', 'assets/characters.png',
