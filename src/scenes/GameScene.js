@@ -1,11 +1,11 @@
 
-function create2DArray(n, m) {
+function create2DArray(n, m, defaultVal = 0) {
     let level = []
     for (let i = 0; i < 100; i++)
     {
         let row = []
         for (let j = 0; j < 100; j++)
-            row.push(0)
+            row.push(defaultVal)
         level.push(row)
     }
     return level
@@ -17,7 +17,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     create() {
-        let level = create2DArray(100, 100)
+        let level = create2DArray(100, 100, 10)
 
         let map = this.make.tilemap({
             data: level,
@@ -29,6 +29,7 @@ export class GameScene extends Phaser.Scene {
         let layer = map.createStaticLayer(0, tiles, 0, 0)
 
         this.cameras.main.setZoom(2)
+
         this.add.text(100, 100, 'Hello Phaser!', { fill: '#0f0' });
     }
 }
