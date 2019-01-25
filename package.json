@@ -1,0 +1,17 @@
+{
+  "name": "Peace",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "babel-core": "6",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.7.0",
+    "copy-webpack-plugin": "^4.6.0",
+    "webpack": "^4.28.1",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.1.14"
+  },
+  "dependencies": {
+    "phaser": "^3.0.0"
+  }
+}

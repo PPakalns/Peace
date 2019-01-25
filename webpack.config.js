@@ -1,0 +1,59 @@
+const path = require('path')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack')
+
+module.exports = {
+    entry: {
+        app: './src/index.js',
+    },
+    output: {
+        path: path.resolve(__dirname, 'build'),
+        filename: 'app.bundle.js',
+    },
+
+    module: {
+        rules: [
+            {
+                test: /\,js$/,
+                include: path.resolve(__dirname, 'src/'),
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['env'],
+                    },
+                },
+            },
+        ],
+    },
+
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                node_vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                },
+            },
+        },
+    },
+
+    devServer: {
+        contentBase: path.resolve(__dirname, 'build'),
+    },
+
+    plugins: [
+        new CopyWebpackPlugin([
+            {
+                from: path.resolve(__dirname, 'src/index.html'),
+                to: path.resolve(__dirname, 'build/index.html'),
+            },
+            {
+                from: path.resolve(__dirname, 'assets', '**', '*'),
+                to: path.resolve(__dirname, 'build'),
+            },
+        ]),
+        new webpack.DefinePlugin({
+            'typeof CANVAS_RENDERER': JSON.stringify(true),
+            'typeof WEBGL_RENDERER': JSON.stringify(true),
+        }),
+    ],
+};

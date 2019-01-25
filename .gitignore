@@ -1,0 +1,6 @@
+tsconfig.json
+jsconfig.json
+build/
+node_modules/
+.tern-project
+
