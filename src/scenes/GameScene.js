@@ -12,8 +12,11 @@ function create2DArray(n, m, defaultVal = 0) {
 }
 
 export class GameScene extends Phaser.Scene {
+
     preload() {
         this.load.image('tiles', 'assets/basictiles.png');
+        this.load.spritesheet('characters', 'assets/characters.png',
+                              {frameWidth:  16, frameHeight: 16});
     }
 
     create() {
@@ -29,7 +32,34 @@ export class GameScene extends Phaser.Scene {
         let layer = map.createStaticLayer(0, tiles, 0, 0)
 
         this.cameras.main.setZoom(2)
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
-        this.add.text(100, 100, 'Hello Phaser!', { fill: '#0f0' });
+        this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
+
+        let player = this.physics.add.sprite(5, 5, 'characters')
+        player.setCollideWorldBounds(true)
+        this.cameras.main.startFollow(player, true, 0.1, 0.1)
+
+        this.e = {
+            player,
+            cursors: this.input.keyboard.createCursorKeys(),
+        }
+    }
+
+    update() {
+        let player = this.e.player;
+
+        player.setVelocity(0)
+        if (this.e.cursors.left.isDown) {
+            player.setVelocityX(-200)
+        } else if (this.e.cursors.right.isDown) {
+            player.setVelocityX(200)
+        }
+
+        if (this.e.cursors.up.isDown) {
+            player.setVelocityY(-200);
+        } else if (this.e.cursors.down.isDown) {
+            player.setVelocityY(200);
+        }
     }
 }
