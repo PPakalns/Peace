@@ -4,7 +4,8 @@ const webpack = require('webpack')
 
 module.exports = {
     entry: {
-        app: './src/index.js',
+        app: path.resolve(__dirname, 'src/index.js'),
+        vendor: ['phaser'],
     },
     output: {
         path: path.resolve(__dirname, 'build'),
@@ -29,11 +30,13 @@ module.exports = {
     optimization: {
         splitChunks: {
             cacheGroups: {
-                node_vendors: {
+                commons: {
                     test: /[\\/]node_modules[\\/]/,
-                },
-            },
-        },
+                    name: 'vendor',
+                    chunks: 'all'
+                }
+            }
+        }
     },
 
     devServer: {
