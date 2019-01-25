@@ -2,6 +2,7 @@ import 'phaser';
 
 import { GameScene } from './scenes/GameScene';
 import { MenuScene } from './scenes/MenuScene';
+import { GuiScene } from './scenes/GuiScene';
 
 const gameConfig = {
     width: 1080,
