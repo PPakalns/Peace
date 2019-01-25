@@ -1,4 +1,4 @@
-export class SimpleScene extends Phaser.Scene {
+export class GameScene extends Phaser.Scene {
     preload() {
         this.load.image('cokecan', 'assets/cokecan.png')
     }
