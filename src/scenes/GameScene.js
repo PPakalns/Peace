@@ -70,6 +70,7 @@ export class GameScene extends Phaser.Scene {
 
         this.e = {
             player: new Player(this, map.widthInPixels / 2, map.heightInPixels / 2),
+            map,
             dynamicLayer,
 
             // Holds enemies
@@ -77,19 +78,30 @@ export class GameScene extends Phaser.Scene {
             enemiesGroup: this.physics.add.group()
         }
 
-        for (let i = 0; i < 100; i++)
-        {
-            let x = Phaser.Math.RND.between(0, map.widthInPixels - 1)
-            let y = Phaser.Math.RND.between(0, map.heightInPixels - 1)
-            let enemy = new Enemy(this, x, y)
-            this.e.enemies.push(enemy)
-            this.e.enemiesGroup.add(enemy.getObject())
-        }
-
         this.cameras.main.startFollow(this.e.player.getObject(), true, 0.1, 0.1)
         this.physics.add.collider(this.e.player.getObject(), dynamicLayer)
         this.physics.add.collider(this.e.enemiesGroup, dynamicLayer)
         this.physics.add.collider(this.e.enemiesGroup, this.e.enemiesGroup)
+        this.physics.add.collider(this.e.enemiesGroup, this.e.player.getObject())
+
+        this.timedEvent = this.time.delayedCall(15000, this.setupEnemies, [], this)
+    }
+
+    setupEnemies() {
+        let playerPos = this.e.player.getPosition()
+        for (let i = 0; i < 100; i++)
+        {
+            let x, y, distance
+            do {
+                x = Phaser.Math.RND.between(0, this.e.map.widthInPixels - 1)
+                y = Phaser.Math.RND.between(0, this.e.map.heightInPixels - 1)
+                distance = (new Phaser.Math.Vector2(x, y)).subtract(playerPos).length()
+            } while (distance < 30 * 16);
+            let enemy = new Enemy(this, x, y)
+            this.e.enemies.push(enemy)
+            this.e.enemiesGroup.add(enemy.getObject())
+        }
+        console.log("Enemies spawned")
     }
 
     update() {

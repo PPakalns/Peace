@@ -35,7 +35,7 @@ export class Enemy extends Entity{
 
         this.entity = scene.physics.add.sprite(x, y, 'characters', 1)
         this.entity.setCollideWorldBounds(true)
-        this.speed = 90
+        this.speed = 30
 
         this.lastDir = 'down'
     }
