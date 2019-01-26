@@ -77,8 +77,8 @@ export class Player {
                 let validPickups = []
                 for (let i = 0; i < pickupSides.length; i++)
                 {
-                    let x = dynamicLayer.worldToTileX(this.player.x)
-                    let y = dynamicLayer.worldToTileY(this.player.y)
+                    let x = dynamicLayer.worldToTileX(this.player.x) + pickupSides[i][0]
+                    let y = dynamicLayer.worldToTileY(this.player.y) + pickupSides[i][1]
                     let tile = dynamicLayer.getTileAt(x, y)
                     if (!tile) {
                         continue
@@ -92,6 +92,7 @@ export class Player {
                     const [tileX, tileY] = Phaser.Math.RND.pick(validPickups)
                     let tile = dynamicLayer.removeTileAt(tileX, tileY)
                     this.pickedUp = tile.index
+                    this.scene.events.emit("pickUp", {key: 'tiles', value: this.pickedUp})
                     console.log("Picked up item", this.pickedUp)
                 }
             }
