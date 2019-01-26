@@ -65,6 +65,8 @@ export class Player extends Entity{
 
         this.entity = scene.physics.add.sprite(x, y, 'characters')
         this.entity.setCollideWorldBounds(true)
+        this.entity.body.setSize(4, 4)
+        this.entity.body.setOffset(6, 12)
         this.speed = 100
 
         // Setup animation
