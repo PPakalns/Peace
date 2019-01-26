@@ -68,8 +68,13 @@ export class Enemy extends Entity{
         this.peacefulness = 0;
     }
 
-    isGood() {
-        return this.peacefulness > 50;
+    updateGood() {
+        if (this.peacefulness > 60) {
+            this.good = true;
+        }
+        if (this.peacefulness < 40) {
+            this.good = false;
+        }
     }
 
     addPeacefulness(delta) {
@@ -83,7 +88,7 @@ export class Enemy extends Entity{
         let deltaChange = -1 * deltaSec
 
         let addScale = 1 * deltaSec
-        let MAX_BLOCK_RADIUS = 6
+        let MAX_BLOCK_RADIUS = 5
         for (let block of getBlocksInRadius(this, dynamicLayer, MAX_BLOCK_RADIUS))
         {
             let dist = (new Phaser.Math.Vector2(block.getCenterX(), block.getCenterY()))
@@ -102,12 +107,11 @@ export class Enemy extends Entity{
         let playerPos = playerEntity.getPosition()
 
         this._updatePeacefulness(delta, dynamicLayer)
+        this.updateGood()
 
         let pos = this.getPosition()
         let diff = playerPos.clone().subtract(pos).normalize().scale(this.speed)
-        let good = this.isGood()
-        if (good) {
-            console.log("GOOD")
+        if (this.good) {
             diff.scale(-1)
         }
         this.entity.setVelocity(diff.x, diff.y)
@@ -124,6 +128,6 @@ export class Enemy extends Entity{
             }
         }
 
-        this.entity.anims.play((good ? 'girl' : 'ghost') + '-' + this.lastDir, true)
+        this.entity.anims.play((this.good ? 'girl' : 'ghost') + '-' + this.lastDir, true)
     }
 }

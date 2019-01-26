@@ -68,6 +68,7 @@ export class Player extends Entity{
         this.entity.setCollideWorldBounds(true)
         this.entity.body.setSize(4, 4)
         this.entity.body.setOffset(6, 12)
+        this.entity.setDepth(1)
         this.speed = 100
 
         // Setup animation
@@ -173,12 +174,12 @@ export class Player extends Entity{
         let deltaChange = 0
         let deltaSec = delta / 1000
 
-        let removeScale = 10 * deltaSec
+        let removeScale = 2 * deltaSec
 
         for (let enemy of enemies)
         {
             let dist = enemy.getPosition().subtract(pos).length()
-            let maxDist = 4 * 16
+            let maxDist = 6 * 16
             if (dist > maxDist) {
                 continue
             }
@@ -186,8 +187,8 @@ export class Player extends Entity{
             deltaChange += -(value * removeScale)
         }
 
-        let addScale = 1 * deltaSec
-        let MAX_BLOCK_RADIUS = 6
+        let addScale = 2 * deltaSec
+        let MAX_BLOCK_RADIUS = 5
         for (let block of getBlocksInRadius(this, dynamicLayer, MAX_BLOCK_RADIUS))
         {
             let dist = (new Phaser.Math.Vector2(block.getCenterX(), block.getCenterY()))
