@@ -17,10 +17,11 @@ function create2DArray(n, m, defaultVal = 0) {
 function generateBlocks(scene, dynamicLayer)
 {
     let objects = [
-        0, 2, 4, 6, 51, 52, 54, 55
+        1, 3, 5, 7, 52, 53, 55, 56
     ]
-    dynamicLayer.setCollisionBetween(0, 15 * 8)
-    dynamicLayer.setCollision([51, 52], false)
+    dynamicLayer.setCollisionBetween(1, 15 * 8)
+    dynamicLayer.setCollision([4, 2, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+                               75, 76, 67, 52, 53, 60], false)
 
     for (let i = 0; i < 2000; i++)
     {
@@ -41,12 +42,10 @@ export class GameScene extends Phaser.Scene {
 
     preload() {
         this.load.spritesheet('tiles', 'assets/basictiles.png',
-                              {frameWidth:  16, frameHeight: 16});
+                              {frameWidth:  16, frameHeight: 16, startFrame: 0});
         this.load.spritesheet('characters', 'assets/characters.png',
                               {frameWidth:  16, frameHeight: 16});
-        this.load.tilemapCSV('karte', 'assets/Karte.csv');
-        this.load.tilemapCSV('maja', 'assets/Maja.csv');
-        this.load.tilemapCSV('videjais', 'assets/Videjais.csv');
+        this.load.tilemapTiledJSON('tilemap', 'assets/untitled.json');
     }
 
     create() {
@@ -56,15 +55,11 @@ export class GameScene extends Phaser.Scene {
 
         let level = create2DArray(300, 300, 10)
 
-        let map = this.make.tilemap({
-            key: 'karte',
-            tileWidth: 16,
-            tileHeight: 16,
-        })
-
-        let tileset = map.addTilesetImage('tiles')
-        let layer = map.createStaticLayer(0, tileset, 0, 0)
-        let dynamicLayer = map.createBlankDynamicLayer('Dynamic', tileset)
+        let map = this.make.tilemap({ key: 'tilemap' })
+        let tileset = map.addTilesetImage('test', 'tiles')
+        let layer = map.createStaticLayer('Karte', tileset)
+        let videjaisLayer = map.createStaticLayer('Videjais', tileset)
+        let dynamicLayer = map.createDynamicLayer('Maja', tileset)
         generateBlocks(this, dynamicLayer)
 
         this.cameras.main.setZoom(2)
@@ -72,7 +67,7 @@ export class GameScene extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         this.e = {
-            player: new Player(this, map.widthInPixels / 2, map.heightInPixels / 2),
+            player: new Player(this, 261 * 16, 181 * 16),
             map,
             dynamicLayer,
 

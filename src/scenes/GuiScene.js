@@ -69,7 +69,7 @@ export class GuiScene extends Phaser.Scene {
         // pick up item - pickUp event
         ourGame.events.on("pickUp", function (item) {
               console.log("Picked up. Tilemap: " + item.key + " TileID: " + item.value);
-              this.pickedItem.setTexture(item.key, item.value)
+              this.pickedItem.setTexture(item.key, item.value - 1)
               this.pickedItem.setVisible(true);
         }, this);
         //Place down picked up item - placeDown event
