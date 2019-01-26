@@ -16,13 +16,13 @@ function create2DArray(n, m, defaultVal = 0) {
 
 function generateMajaBlocks(dynamicLayer) {
     let objects = [
-        1, 3, 5, 7, 52, 53, 55, 56
+        1, 3, 5, 7, 52, 53, 55, 56, 91, 99, 107, 115, 97, 98,
     ]
     dynamicLayer.setCollisionBetween(1, 15 * 8)
     dynamicLayer.setCollision([4, 2, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
                                75, 76, 67, 52, 53, 60], false)
 
-    for (let i = 0; i < 1800; i++)
+    for (let i = 0; i < 1500; i++)
     {
         let x, y
         do {
@@ -39,7 +39,7 @@ function generatePaklajiBlocks(layer) {
         83, 84, 85, 86, 9, 10, 17, 18
     ]
 
-    for (let i = 0; i < 1000; i++)
+    for (let i = 0; i < 800; i++)
     {
         let x, y
         do {
