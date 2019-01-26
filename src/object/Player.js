@@ -1,3 +1,4 @@
+import { Entity } from 'object/Entity'
 
 let DIRECTION_OFFSET = {
     "left": [[-1, 0], [-1, 1], [-1, -1]],
@@ -6,9 +7,9 @@ let DIRECTION_OFFSET = {
     "up": [[0, -1], [1, -1], [-1, -1]],
 }
 
-
-export class Player {
+export class Player extends Entity{
     constructor(scene, x, y) {
+        super(scene)
         scene.anims.create({
             key: 'player-still-down',
             frames: [ {  key: 'characters', frame: 7 } ],
@@ -58,9 +59,8 @@ export class Player {
             repeat: -1,
         })
 
-        this.scene = scene;
-        this.player = scene.physics.add.sprite(x, y, 'characters')
-        this.player.setCollideWorldBounds(true)
+        this.entity = scene.physics.add.sprite(x, y, 'characters')
+        this.entity.setCollideWorldBounds(true)
         this.speed = 100
 
         // Setup animation
@@ -70,16 +70,6 @@ export class Player {
         // Picked up item
         this.pickedUp = null;
         this.lastSpaceDown = null;
-    }
-
-    getObject() {
-        return this.player
-    }
-
-    getTileCoords(layer) {
-        let tx = layer.worldToTileX(this.player.x)
-        let ty = layer.worldToTileY(this.player.y)
-        return [tx, ty]
     }
 
     _pickup(dynamicLayer) {
@@ -129,31 +119,36 @@ export class Player {
     update(dynamicLayer) {
         let isStill = true
 
-        this.player.setVelocity(0)
+        let velocity = new Phaser.Math.Vector2(0, 0)
+
+        this.entity.setVelocity(0)
         if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-this.speed)
+            velocity.x = -1;
             isStill = false
             this.lastDirection = 'left'
         } else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(this.speed)
+            velocity.x = 1;
             isStill = false
             this.lastDirection = 'right'
         }
 
         if (this.cursors.up.isDown) {
-            this.player.setVelocityY(-this.speed);
+            velocity.y = -1
             isStill = false
             this.lastDirection = 'up'
         } else if (this.cursors.down.isDown) {
-            this.player.setVelocityY(this.speed);
+            velocity.y = 1
             isStill = false
             this.lastDirection = 'down'
         }
 
+        velocity.normalize().scale(this.speed)
+        this.entity.setVelocity(velocity.x, velocity.y)
+
         let animation_name = 'player-' +
                              (isStill ? 'still-' : '') +
                              this.lastDirection;
-        this.player.anims.play(animation_name, true)
+        this.entity.anims.play(animation_name, true)
 
         if (this.cursors.space.isDown &&
             this.cursors.space.timeDown != this.lastSpaceDown) { // simulate ondown
@@ -165,7 +160,7 @@ export class Player {
             }
         }
 
-        this.player.anims.play(animation_name, true)
+        this.entity.anims.play(animation_name, true)
         this.animation_name = animation_name
     }
 }

@@ -1,4 +1,5 @@
 import { Player } from 'object/Player'
+import { Enemy } from 'object/Enemy'
 
 function create2DArray(n, m, defaultVal = 0) {
     let level = []
@@ -66,13 +67,32 @@ export class GameScene extends Phaser.Scene {
         this.e = {
             player: new Player(this, map.widthInPixels / 2, map.heightInPixels / 2),
             dynamicLayer,
+
+            // Holds enemies
+            enemies: [],
+            enemiesGroup: this.physics.add.group()
+        }
+
+        for (let i = 0; i < 100; i++)
+        {
+            let x = Phaser.Math.RND.between(0, map.widthInPixels - 1)
+            let y = Phaser.Math.RND.between(0, map.heightInPixels - 1)
+            let enemy = new Enemy(this, x, y)
+            this.e.enemies.push(enemy)
+            this.e.enemiesGroup.add(enemy.getObject())
         }
 
         this.cameras.main.startFollow(this.e.player.getObject(), true, 0.1, 0.1)
         this.physics.add.collider(this.e.player.getObject(), dynamicLayer)
+        this.physics.add.collider(this.e.enemiesGroup, dynamicLayer)
+        this.physics.add.collider(this.e.enemiesGroup, this.e.enemiesGroup)
     }
 
     update() {
         this.e.player.update(this.e.dynamicLayer)
+        for (let enemy of this.e.enemies)
+        {
+            enemy.update(this.e.player)
+        }
     }
 }
