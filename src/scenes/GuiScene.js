@@ -19,10 +19,16 @@ export class GuiScene extends Phaser.Scene {
 
     create ()
     {
-        //  Our Text object to display the Score
+        //Box for picked item
+        let pickedItemBox = this.add.graphics();
+        pickedItemBox.setScrollFactor(0);
+        pickedItemBox.fillStyle(0xbed9f4, 0.8);
+        pickedItemBox.fillRect(this.progressLocX + 335, this.progressLocY ,this.progressLocX + 40, this.progressLocY + 40)
+        //Picked Item sprite initialize
         this.pickedItem = this.add.sprite(this.progressLocX + 360,this.progressLocY + 25,'tiles');
         this.pickedItem.setVisible(false);
         this.pickedItem.setDisplaySize(60,60)
+        //Peacefulness bar
         let progressBar = this.add.graphics();
         progressBar.setScrollFactor(0);
         let progressBox = this.add.graphics();

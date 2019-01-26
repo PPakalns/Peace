@@ -16,11 +16,11 @@ export class MenuScene extends Phaser.Scene {
         //btnStart.setDisplaySize(32,32);
         //btnStart.on('pointerover', function (event) { btnStart.setTexture('imgButtonStartHover');/* Do something when the mouse enters */ });
         //btnStart.on('pointerout', function (event) { btnStart.setTexture('imgButtonStartNormal');/* Do something when the mouse exits. */ });
-        btnStart.on('pointerdown', function(event){
-          this.scene.start('gameScene');
-          this.scene.start('guiScene');
+        //btnStart.on('pointerdown', function(event){
+        this.scene.start('gameScene');
+        this.scene.start('guiScene');
           //this.moveAbove( 'guiScene', 'gameScene');
-        }, this);
+        //}, this);
 
     }
 
