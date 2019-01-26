@@ -21,7 +21,7 @@ function generateBlocks(scene, dynamicLayer)
     dynamicLayer.setCollisionBetween(0, 15 * 8)
     dynamicLayer.setCollision([51, 52], false)
 
-    for (let i = 0; i < 1000; i++)
+    for (let i = 0; i < 2000; i++)
     {
         let x, y
         do {
@@ -29,8 +29,7 @@ function generateBlocks(scene, dynamicLayer)
             y = Phaser.Math.RND.between(0, dynamicLayer.tilemap.height - 1)
         } while (dynamicLayer.getTileAt(x, y) != null);
 
-        let idx = Phaser.Math.RND.between(0, objects.length - 1)
-        dynamicLayer.putTileAt(objects[idx], x, y)
+        dynamicLayer.putTileAt(Phaser.Math.RND.weightedPick(objects), x, y)
     }
 }
 

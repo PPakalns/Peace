@@ -1,3 +1,12 @@
+
+let DIRECTION_OFFSET = {
+    "left": [[-1, 0], [-1, 1], [-1, -1]],
+    "right": [[1, 0], [1, 1], [1, -1]],
+    "down": [[0, 1], [-1, 1], [1, 1]],
+    "up": [[0, -1], [1, -1], [-1, -1]],
+}
+
+
 export class Player {
     constructor(scene, x, y) {
         scene.anims.create({
@@ -52,6 +61,7 @@ export class Player {
         this.scene = scene;
         this.player = scene.physics.add.sprite(x, y, 'characters')
         this.player.setCollideWorldBounds(true)
+        this.speed = 100
 
         // Setup animation
         this.cursors = scene.input.keyboard.createCursorKeys()
@@ -66,26 +76,76 @@ export class Player {
         return this.player
     }
 
+    getTileCoords(layer) {
+        let tx = layer.worldToTileX(this.player.x)
+        let ty = layer.worldToTileY(this.player.y)
+        return [tx, ty]
+    }
+
+    _pickup(dynamicLayer) {
+        let pickupSides = DIRECTION_OFFSET[this.lastDirection]
+                          .concat([[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]])
+        let validPickup = null
+        for (let i = 0; i < pickupSides.length; i++)
+        {
+            let [tx, ty] = this.getTileCoords(dynamicLayer)
+            tx += pickupSides[i][0]
+            ty += pickupSides[i][1]
+            let tile = dynamicLayer.getTileAt(tx, ty)
+            if (!tile) {
+                continue
+            }
+            validPickup = [tx, ty]
+            break
+        }
+
+        if (validPickup)
+        {
+            // Pickup item
+            const [tileX, tileY] = validPickup
+            let tile = dynamicLayer.removeTileAt(tileX, tileY)
+            this.pickedUp = tile.index
+            this.scene.events.emit("pickUp", {key: 'tiles', value: this.pickedUp})
+            console.log("Picked up item", this.pickedUp)
+        }
+    }
+
+    _putdown(dynamicLayer) {
+        let dirOffset = DIRECTION_OFFSET[this.lastDirection][0]
+        let [tileX, tileY] = this.getTileCoords(dynamicLayer)
+        tileX += dirOffset[0]
+        tileY += dirOffset[1]
+
+        let tileAt = dynamicLayer.getTileAt(tileX, tileY)
+
+        if (tileAt == null)
+        {
+            dynamicLayer.putTileAt(this.pickedUp, tileX, tileY)
+            this.pickedUp = null;
+            this.scene.events.emit("placeDown")
+        }
+    }
+
     update(dynamicLayer) {
         let isStill = true
 
         this.player.setVelocity(0)
         if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-200)
+            this.player.setVelocityX(-this.speed)
             isStill = false
             this.lastDirection = 'left'
         } else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(200)
+            this.player.setVelocityX(this.speed)
             isStill = false
             this.lastDirection = 'right'
         }
 
         if (this.cursors.up.isDown) {
-            this.player.setVelocityY(-200);
+            this.player.setVelocityY(-this.speed);
             isStill = false
             this.lastDirection = 'up'
         } else if (this.cursors.down.isDown) {
-            this.player.setVelocityY(200);
+            this.player.setVelocityY(this.speed);
             isStill = false
             this.lastDirection = 'down'
         }
@@ -99,32 +159,9 @@ export class Player {
             this.cursors.space.timeDown != this.lastSpaceDown) { // simulate ondown
             this.lastSpaceDown = this.cursors.space.timeDown;
             if (this.pickedUp == null) {
-                // TRY TO PICKUP
-                let pickupSides = [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]
-                let validPickups = []
-                for (let i = 0; i < pickupSides.length; i++)
-                {
-                    let x = dynamicLayer.worldToTileX(this.player.x) + pickupSides[i][0]
-                    let y = dynamicLayer.worldToTileY(this.player.y) + pickupSides[i][1]
-                    let tile = dynamicLayer.getTileAt(x, y)
-                    if (!tile) {
-                        continue
-                    }
-                    validPickups.push([x, y])
-                }
-
-                if (validPickups.length > 0)
-                {
-                    // Pickup item
-                    const [tileX, tileY] = Phaser.Math.RND.pick(validPickups)
-                    let tile = dynamicLayer.removeTileAt(tileX, tileY)
-                    this.pickedUp = tile.index
-                    this.scene.events.emit("pickUp", {key: 'tiles', value: this.pickedUp})
-                    console.log("Picked up item", this.pickedUp)
-                }
+                this._pickup(dynamicLayer)
             } else {
-                // PUT DOWN
-
+                this._putdown(dynamicLayer)
             }
         }
 
