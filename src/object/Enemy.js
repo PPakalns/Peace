@@ -58,10 +58,11 @@ export class Enemy extends Entity{
 
     constructor(scene, x, y) {
         super(scene)
-
+        this.SkullSpeed = 30;
+        this.GirlSpeed = 70;
         this.entity = scene.physics.add.sprite(x, y, 'characters', 1)
         this.entity.setCollideWorldBounds(true)
-        this.speed = 30
+        this.speed = this.SkullSpeed;
 
         this.lastDir = 'down'
 
@@ -71,9 +72,11 @@ export class Enemy extends Entity{
     updateGood() {
         if (this.peacefulness > 60) {
             this.good = true;
+            this.speed = this.GirlSpeed;
         }
         if (this.peacefulness < 40) {
             this.good = false;
+            this.speed = this.SkullSpeed
         }
     }
 

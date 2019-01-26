@@ -33,7 +33,7 @@ export class GuiScene extends Phaser.Scene {
         progressBar.setScrollFactor(0);
         let progressBox = this.add.graphics();
         progressBox.setScrollFactor(0);
-        let progressText = this.add.text( 100 , 25, "Peacefulness" ,{font: '20px monospace',fill: '#ffffff'})
+        let progressText = this.add.text( 100 , 25, "Peace" ,{font: '20px monospace',fill: '#ffffff'})
         progressText.setScrollFactor(0);
         progressBox.fillStyle(0xbed9f4, 0.8);
         progressBox.fillRect(this.progressLocX, this.progressLocY, this.progressLocX + 310, this.progressLocY + 40);
