@@ -2,10 +2,10 @@ import { Player } from 'object/Player'
 
 function create2DArray(n, m, defaultVal = 0) {
     let level = []
-    for (let i = 0; i < 100; i++)
+    for (let i = 0; i < n; i++)
     {
         let row = []
-        for (let j = 0; j < 100; j++)
+        for (let j = 0; j < m; j++)
             row.push(defaultVal)
         level.push(row)
     }
@@ -21,7 +21,7 @@ function generateBlocks(scene, dynamicLayer)
     dynamicLayer.setCollisionBetween(0, 15 * 8)
     dynamicLayer.setCollision([51, 52], false)
 
-    for (let i = 0; i < 500; i++)
+    for (let i = 0; i < 1000; i++)
     {
         let x, y
         do {
@@ -47,7 +47,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     create() {
-        let level = create2DArray(100, 100, 10)
+        let level = create2DArray(300, 300, 10)
 
         let map = this.make.tilemap({
             data: level,
@@ -66,6 +66,7 @@ export class GameScene extends Phaser.Scene {
 
         this.e = {
             player: new Player(this, map.widthInPixels / 2, map.heightInPixels / 2),
+            dynamicLayer,
         }
 
         this.cameras.main.startFollow(this.e.player.getObject(), true, 0.1, 0.1)
@@ -73,6 +74,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     update() {
-        this.e.player.update()
+        this.e.player.update(this.e.dynamicLayer)
     }
 }

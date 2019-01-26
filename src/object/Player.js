@@ -39,13 +39,17 @@ export class Player {
         this.animation_name = 'player-still'
         this.player.anims.play(this.animation_name)
         this.cursors = scene.input.keyboard.createCursorKeys()
+
+        // Picked up item
+        this.pickedUp = null;
+        this.lastSpaceDown = null;
     }
 
     getObject() {
         return this.player
     }
 
-    update() {
+    update(dynamicLayer) {
         let animation_name = 'player-still'
 
         this.player.setVelocity(0)
@@ -63,6 +67,34 @@ export class Player {
         } else if (this.cursors.down.isDown) {
             this.player.setVelocityY(200);
             animation_name = 'player-down'
+        }
+
+        if (this.cursors.space.isDown &&
+            this.cursors.space.timeDown != this.lastSpaceDown) { // simulate ondown
+            this.lastSpaceDown = this.cursors.space.timeDown;
+            if (this.pickedUp == null) {
+                let pickupSides = [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]
+                let validPickups = []
+                for (let i = 0; i < pickupSides.length; i++)
+                {
+                    let x = dynamicLayer.worldToTileX(this.player.x)
+                    let y = dynamicLayer.worldToTileY(this.player.y)
+                    let tile = dynamicLayer.getTileAt(x, y)
+                    if (!tile) {
+                        continue
+                    }
+                    validPickups.push([x, y])
+                }
+
+                if (validPickups.length > 0)
+                {
+                    // Pickup item
+                    const [tileX, tileY] = Phaser.Math.RND.pick(validPickups)
+                    let tile = dynamicLayer.removeTileAt(tileX, tileY)
+                    this.pickedUp = tile.index
+                    console.log("Picked up item", this.pickedUp)
+                }
+            }
         }
 
         this.player.anims.play(animation_name, true)
