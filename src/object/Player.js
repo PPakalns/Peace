@@ -1,4 +1,5 @@
 import { Entity } from 'object/Entity'
+import { getBlocksInRadius } from 'utility'
 
 let DIRECTION_OFFSET = {
     "left": [[-1, 0], [-1, 1], [-1, -1]],
@@ -76,6 +77,15 @@ export class Player extends Entity{
         // Picked up item
         this.pickedUp = null;
         this.lastSpaceDown = null;
+
+        this.peacefulness = 0
+        this.addPeacefulness(100)
+    }
+
+    addPeacefulness(delta) {
+        this.peacefulness += delta
+        this.peacefulness = Math.min(100, this.peacefulness)
+        this.scene.events.emit('peacefulness', this.peacefulness)
     }
 
     _pickup(dynamicLayer) {
@@ -122,7 +132,7 @@ export class Player extends Entity{
         }
     }
 
-    update(dynamicLayer) {
+    _processMovement() {
         let isStill = true
 
         let velocity = new Phaser.Math.Vector2(0, 0)
@@ -155,7 +165,48 @@ export class Player extends Entity{
                              (isStill ? 'still-' : '') +
                              this.lastDirection;
         this.entity.anims.play(animation_name, true)
+        this.animation_name = animation_name
+    }
 
+    _processPeacefulness(delta, enemies, dynamicLayer) {
+        let pos = this.getPosition()
+        let deltaChange = 0
+        let deltaSec = delta / 1000
+
+        let removeScale = 10 * deltaSec
+
+        for (let enemy of enemies)
+        {
+            let dist = enemy.getPosition().subtract(pos).length()
+            let maxDist = 4 * 16
+            if (dist > maxDist) {
+                continue
+            }
+            let value = (maxDist - dist) / maxDist
+            deltaChange += -(value * removeScale)
+        }
+
+        let addScale = 1 * deltaSec
+        let MAX_BLOCK_RADIUS = 6
+        for (let block of getBlocksInRadius(this, dynamicLayer, MAX_BLOCK_RADIUS))
+        {
+            let dist = (new Phaser.Math.Vector2(block.getCenterX(), block.getCenterY()))
+                                       .subtract(pos).length()
+            let maxDist = MAX_BLOCK_RADIUS * 16
+            if (dist > maxDist) {
+                continue
+            }
+            let value = (maxDist - dist) / maxDist
+            deltaChange += (value * addScale)
+        }
+        this.addPeacefulness(deltaChange)
+    }
+
+    update(delta, dynamicLayer, enemies) {
+        this._processMovement()
+        this._processPeacefulness(delta, enemies, dynamicLayer)
+
+        // Pickup, putdown item
         if (this.cursors.space.isDown &&
             this.cursors.space.timeDown != this.lastSpaceDown) { // simulate ondown
             this.lastSpaceDown = this.cursors.space.timeDown;
@@ -165,8 +216,5 @@ export class Player extends Entity{
                 this._putdown(dynamicLayer)
             }
         }
-
-        this.entity.anims.play(animation_name, true)
-        this.animation_name = animation_name
     }
 }

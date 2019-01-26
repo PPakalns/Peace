@@ -87,7 +87,7 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.e.enemiesGroup, this.e.enemiesGroup)
         this.physics.add.collider(this.e.enemiesGroup, this.e.player.getObject())
 
-        this.timedEvent = this.time.delayedCall(15000, this.setupEnemies, [], this)
+        this.timedEvent = this.time.delayedCall(1000, this.setupEnemies, [], this)
     }
 
     setupEnemies() {
@@ -99,7 +99,7 @@ export class GameScene extends Phaser.Scene {
                 x = Phaser.Math.RND.between(0, this.e.map.widthInPixels - 1)
                 y = Phaser.Math.RND.between(0, this.e.map.heightInPixels - 1)
                 distance = (new Phaser.Math.Vector2(x, y)).subtract(playerPos).length()
-            } while (distance < 30 * 16);
+            } while (distance < 100 * 16);
             let enemy = new Enemy(this, x, y)
             this.e.enemies.push(enemy)
             this.e.enemiesGroup.add(enemy.getObject())
@@ -107,11 +107,11 @@ export class GameScene extends Phaser.Scene {
         console.log("Enemies spawned")
     }
 
-    update() {
-        this.e.player.update(this.e.dynamicLayer)
+    update(time, delta) {
+        this.e.player.update(delta, this.e.dynamicLayer, this.e.enemies)
         for (let enemy of this.e.enemies)
         {
-            enemy.update(this.e.player)
+            enemy.update(delta, this.e.player, this.e.dynamicLayer)
         }
     }
 }

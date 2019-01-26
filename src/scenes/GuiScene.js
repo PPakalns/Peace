@@ -46,9 +46,8 @@ export class GuiScene extends Phaser.Scene {
         ourGame.events.removeAllListeners("removePeacefulness");
         ourGame.events.removeAllListeners("pickUp");
         ourGame.events.removeAllListeners("placeDown");
-        ourGame.events.on("removePeacefulness", function () {
-              this.peaceFulness -= 0.2;
-              console.log("Peace: " + this.peaceFulness)
+        ourGame.events.on("peacefulness", function (value) {
+              this.peaceFulness = value;
               if (this.peaceFulness<=0){
                 console.log("game over");
                 this.scene.pause('gameScene');
