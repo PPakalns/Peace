@@ -6,8 +6,6 @@ export class GuiScene extends Phaser.Scene {
         this.peaceFulness = 100;
         this.progressLocX = 10;
         this.progressLocY = 10;
-        this.pickedItem;
-
 
     }
 
@@ -15,19 +13,21 @@ export class GuiScene extends Phaser.Scene {
 
         //load tilemaps for items and other stuff
 
+
     }
 
     create ()
     {
+        this.peaceFulness = 100;
         //Box for picked item
         let pickedItemBox = this.add.graphics();
         pickedItemBox.setScrollFactor(0);
         pickedItemBox.fillStyle(0xbed9f4, 0.8);
         pickedItemBox.fillRect(this.progressLocX + 335, this.progressLocY ,this.progressLocX + 40, this.progressLocY + 40)
-        //Picked Item sprite initialize
         this.pickedItem = this.add.sprite(this.progressLocX + 360,this.progressLocY + 25,'tiles');
+        this.pickedItem.setScrollFactor(0);
         this.pickedItem.setVisible(false);
-        this.pickedItem.setDisplaySize(60,60)
+        this.pickedItem.setScale(2,2);
         //Peacefulness bar
         let progressBar = this.add.graphics();
         progressBar.setScrollFactor(0);
@@ -43,9 +43,26 @@ export class GuiScene extends Phaser.Scene {
         let ourGame = this.scene.get('gameScene');
         console.log("Peace: " + this.peaceFulness)
         //  Listen for events from it
+        ourGame.events.removeAllListeners("removePeacefulness");
+        ourGame.events.removeAllListeners("pickUp");
+        ourGame.events.removeAllListeners("placeDown");
         ourGame.events.on("removePeacefulness", function () {
               this.peaceFulness -= 0.2;
               console.log("Peace: " + this.peaceFulness)
+              if (this.peaceFulness<=0){
+                console.log("game over");
+                this.scene.pause('gameScene');
+                let gameOverText = this.add.text( 100 , 100, "Game Over!" , {font: '50px monospace',fill: '#ffffff'})
+                let timedEvent = this.time.addEvent({delay: 2000, callback: function(){
+                                                            //this.scene.stop('gameScene');
+                                                            //this.scene.start('menuScene');
+                                                            //this.scene.stop('guiScene');
+                                                            this.scene.stop('gameScene');
+                                                            this.scene.start('menuScene');
+                                                            this.scene.stop('guiScene');
+
+                                                          }, callbackScope:this});
+              }
               progressBar.clear();
               progressBar.fillStyle(0xffffff, 1);
               progressBar.fillRect(this.progressLocX + 10, this.progressLocY + 10, this.peaceFulness*3 , this.progressLocY + 20);
