@@ -47,6 +47,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // Setup animations
+        Enemy.InitializeAnimations(this)
+        Player.InitializeAnimations(this)
+
         let level = create2DArray(300, 300, 10)
 
         let map = this.make.tilemap({

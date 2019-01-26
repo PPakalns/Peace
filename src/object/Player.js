@@ -8,8 +8,8 @@ let DIRECTION_OFFSET = {
 }
 
 export class Player extends Entity{
-    constructor(scene, x, y) {
-        super(scene)
+
+    static InitializeAnimations(scene) {
         scene.anims.create({
             key: 'player-still-down',
             frames: [ {  key: 'characters', frame: 7 } ],
@@ -58,6 +58,10 @@ export class Player extends Entity{
             frameRate: 10,
             repeat: -1,
         })
+    }
+
+    constructor(scene, x, y) {
+        super(scene)
 
         this.entity = scene.physics.add.sprite(x, y, 'characters')
         this.entity.setCollideWorldBounds(true)
