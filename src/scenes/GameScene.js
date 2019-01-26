@@ -16,8 +16,10 @@ function create2DArray(n, m, defaultVal = 0) {
 function generateBlocks(scene, dynamicLayer)
 {
     let objects = [
-        0, 2, 4
+        0, 2, 4, 6, 51, 52, 54, 55
     ]
+    dynamicLayer.setCollisionBetween(0, 15 * 8)
+    dynamicLayer.setCollision([51, 52], false)
 
     for (let i = 0; i < 500; i++)
     {
@@ -56,11 +58,6 @@ export class GameScene extends Phaser.Scene {
         let tileset = map.addTilesetImage('tiles')
         let layer = map.createStaticLayer(0, tileset, 0, 0)
         let dynamicLayer = map.createBlankDynamicLayer('Dynamic', tileset)
-
-        // How to add block
-        dynamicLayer.putTileAt(4, 10, 10)
-        dynamicLayer.setCollisionBetween(0, 20)
-
         generateBlocks(this, dynamicLayer)
 
         this.cameras.main.setZoom(2)
