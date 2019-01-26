@@ -140,7 +140,8 @@ export class Player extends Entity{
         }
     }
 
-    _processMovement() {
+    _processMovement(delta) {
+        let deltaSec = delta / 1000
         let isStill = true
 
         let velocity = new Phaser.Math.Vector2(0, 0)
@@ -168,6 +169,7 @@ export class Player extends Entity{
 
         if (this.cursors.shift.isDown) {
           this.speed = 150
+          this.addPeacefulness(deltaSec * -5)
         } else {
           this.speed = this.normalSpeed
         }
@@ -227,7 +229,7 @@ export class Player extends Entity{
     }
 
     update(delta, dynamicLayer, carpetLayer, enemies) {
-        this._processMovement()
+        this._processMovement(delta)
         this._processPeacefulness(delta, enemies, dynamicLayer, carpetLayer)
 
         // Pickup, putdown item
