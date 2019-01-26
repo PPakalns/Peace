@@ -1,5 +1,5 @@
 export class Player {
-    constructor(scene) {
+    constructor(scene, x, y) {
         scene.anims.create({
             key: 'player-still',
             frames: [ {  key: 'characters', frame: 7 } ],
@@ -32,7 +32,7 @@ export class Player {
         })
 
         this.scene = scene;
-        this.player = scene.physics.add.sprite(0, 0, 'characters')
+        this.player = scene.physics.add.sprite(x, y, 'characters')
         this.player.setCollideWorldBounds(true)
 
         // Setup animation

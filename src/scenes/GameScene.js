@@ -12,6 +12,26 @@ function create2DArray(n, m, defaultVal = 0) {
     return level
 }
 
+
+function generateBlocks(scene, dynamicLayer)
+{
+    let objects = [
+        0, 2, 4
+    ]
+
+    for (let i = 0; i < 500; i++)
+    {
+        let x, y
+        do {
+            x = Phaser.Math.RND.between(0, dynamicLayer.tilemap.width - 1)
+            y = Phaser.Math.RND.between(0, dynamicLayer.tilemap.height - 1)
+        } while (dynamicLayer.getTileAt(x, y) != null);
+
+        let idx = Phaser.Math.RND.between(0, objects.length - 1)
+        dynamicLayer.putTileAt(objects[idx], x, y)
+    }
+}
+
 export class GameScene extends Phaser.Scene {
     constructor() {
         super({key: 'gameScene'} );
@@ -32,18 +52,26 @@ export class GameScene extends Phaser.Scene {
             tileHeight: 16,
         })
 
-        let tiles = map.addTilesetImage('tiles')
-        let layer = map.createStaticLayer(0, tiles, 0, 0)
+        let tileset = map.addTilesetImage('tiles')
+        let layer = map.createStaticLayer(0, tileset, 0, 0)
+        let dynamicLayer = map.createBlankDynamicLayer('Dynamic', tileset)
+
+        // How to add block
+        dynamicLayer.putTileAt(4, 10, 10)
+        dynamicLayer.setCollisionBetween(0, 20)
+
+        generateBlocks(this, dynamicLayer)
 
         this.cameras.main.setZoom(2)
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         this.e = {
-            player: new Player(this),
+            player: new Player(this, map.widthInPixels / 2, map.heightInPixels / 2),
         }
 
         this.cameras.main.startFollow(this.e.player.getObject(), true, 0.1, 0.1)
+        this.physics.add.collider(this.e.player.getObject(), dynamicLayer)
     }
 
     update() {
