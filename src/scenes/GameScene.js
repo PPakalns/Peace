@@ -44,6 +44,9 @@ export class GameScene extends Phaser.Scene {
                               {frameWidth:  16, frameHeight: 16});
         this.load.spritesheet('characters', 'assets/characters.png',
                               {frameWidth:  16, frameHeight: 16});
+        this.load.tilemapCSV('karte', 'assets/Karte.csv');
+        this.load.tilemapCSV('maja', 'assets/Maja.csv');
+        this.load.tilemapCSV('videjais', 'assets/Videjais.csv');
     }
 
     create() {
@@ -54,7 +57,7 @@ export class GameScene extends Phaser.Scene {
         let level = create2DArray(300, 300, 10)
 
         let map = this.make.tilemap({
-            data: level,
+            key: 'karte',
             tileWidth: 16,
             tileHeight: 16,
         })
