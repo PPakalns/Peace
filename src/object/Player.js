@@ -1,8 +1,26 @@
 export class Player {
     constructor(scene, x, y) {
         scene.anims.create({
-            key: 'player-still',
+            key: 'player-still-down',
             frames: [ {  key: 'characters', frame: 7 } ],
+            frameRate: 10,
+            repeat: -1,
+        })
+        scene.anims.create({
+            key: 'player-still-left',
+            frames: [ {  key: 'characters', frame: 19 } ],
+            frameRate: 10,
+            repeat: -1,
+        })
+        scene.anims.create({
+            key: 'player-still-right',
+            frames: [ {  key: 'characters', frame: 31 } ],
+            frameRate: 10,
+            repeat: -1,
+        })
+        scene.anims.create({
+            key: 'player-still-up',
+            frames: [ {  key: 'characters', frame: 43 } ],
             frameRate: 10,
             repeat: -1,
         })
@@ -36,9 +54,8 @@ export class Player {
         this.player.setCollideWorldBounds(true)
 
         // Setup animation
-        this.animation_name = 'player-still'
-        this.player.anims.play(this.animation_name)
         this.cursors = scene.input.keyboard.createCursorKeys()
+        this.lastDirection = 'down'
 
         // Picked up item
         this.pickedUp = null;
@@ -50,29 +67,39 @@ export class Player {
     }
 
     update(dynamicLayer) {
-        let animation_name = 'player-still'
+        let isStill = true
 
         this.player.setVelocity(0)
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-200)
-            animation_name = 'player-left'
+            isStill = false
+            this.lastDirection = 'left'
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(200)
-            animation_name = 'player-right'
+            isStill = false
+            this.lastDirection = 'right'
         }
 
         if (this.cursors.up.isDown) {
             this.player.setVelocityY(-200);
-            animation_name = 'player-up'
+            isStill = false
+            this.lastDirection = 'up'
         } else if (this.cursors.down.isDown) {
             this.player.setVelocityY(200);
-            animation_name = 'player-down'
+            isStill = false
+            this.lastDirection = 'down'
         }
+
+        let animation_name = 'player-' +
+                             (isStill ? 'still-' : '') +
+                             this.lastDirection;
+        this.player.anims.play(animation_name, true)
 
         if (this.cursors.space.isDown &&
             this.cursors.space.timeDown != this.lastSpaceDown) { // simulate ondown
             this.lastSpaceDown = this.cursors.space.timeDown;
             if (this.pickedUp == null) {
+                // TRY TO PICKUP
                 let pickupSides = [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]
                 let validPickups = []
                 for (let i = 0; i < pickupSides.length; i++)
@@ -95,6 +122,9 @@ export class Player {
                     this.scene.events.emit("pickUp", {key: 'tiles', value: this.pickedUp})
                     console.log("Picked up item", this.pickedUp)
                 }
+            } else {
+                // PUT DOWN
+
             }
         }
 
