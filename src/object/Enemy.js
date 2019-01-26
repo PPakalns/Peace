@@ -59,7 +59,7 @@ export class Enemy extends Entity{
     constructor(scene, x, y) {
         super(scene)
         this.SkullSpeed = 30;
-        this.GirlSpeed = 70;
+        this.GirlSpeed = 50;
         this.entity = scene.physics.add.sprite(x, y, 'characters', 1)
         this.entity.setCollideWorldBounds(true)
         this.speed = this.SkullSpeed;
@@ -88,7 +88,7 @@ export class Enemy extends Entity{
     _updatePeacefulness(delta, dynamicLayer, carpetLayer) {
         let pos = this.getPosition()
         let deltaSec = delta / 1000
-        let deltaChange = -1 * deltaSec
+        let deltaChange = -3 * deltaSec
 
         let addScale = 1 * deltaSec
         let MAX_BLOCK_RADIUS = 5

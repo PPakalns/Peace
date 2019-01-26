@@ -69,7 +69,8 @@ export class Player extends Entity{
         this.entity.body.setSize(4, 4)
         this.entity.body.setOffset(6, 12)
         this.entity.setDepth(1)
-        this.speed = 100
+        this.normalSpeed = 100
+        this.speed = this.normalSpeed
 
         // Setup animation
         this.cursors = scene.input.keyboard.createCursorKeys()
@@ -165,6 +166,11 @@ export class Player extends Entity{
             this.lastDirection = 'down'
         }
 
+        if (this.cursors.shift.isDown) {
+          this.speed = 150
+        } else {
+          this.speed = this.normalSpeed
+        }
         velocity.normalize().scale(this.speed)
         this.entity.setVelocity(velocity.x, velocity.y)
 
@@ -200,10 +206,13 @@ export class Player extends Entity{
         let deltaChange = 0
         let deltaSec = delta / 1000
 
-        let removeScale = 4 * deltaSec
-        let maxEnemyDist = 6 * 16
+        let removeScale = 3 * deltaSec
+        let maxEnemyDist = 9 * 16
         for (let enemy of enemies)
         {
+            if (enemy.good){
+              continue
+            }
             let dist = enemy.getPosition().subtract(pos).length()
             if (dist > maxEnemyDist) {
                 continue
