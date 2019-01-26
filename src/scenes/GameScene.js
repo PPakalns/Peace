@@ -1,4 +1,4 @@
-import Player from 'object/Player'
+import { Player } from 'object/Player'
 
 function create2DArray(n, m, defaultVal = 0) {
     let level = []
@@ -39,15 +39,14 @@ export class GameScene extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
-        Player.DefinePlayerAnimations(this)
-
         this.e = {
-            player: Player.Initialize(this),
-            cursors: this.input.keyboard.createCursorKeys(),
+            player: new Player(this),
         }
+
+        this.cameras.main.startFollow(this.e.player.getObject(), true, 0.1, 0.1)
     }
 
     update() {
-        Player.UpdatePlayer(this.e.player, this.e.cursors)
+        this.e.player.update()
     }
 }
