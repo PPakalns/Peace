@@ -6,13 +6,13 @@ export class GuiScene extends Phaser.Scene {
         this.peaceFulness = 100;
         this.progressLocX = 10;
         this.progressLocY = 10;
+        this.pickedItem;
     }
 
     preload() {
-        //this.load.image('Start_button', 'assets/Start_button.png')
-        //this.load.image('background','assets/background.png')
 
-
+        //load tilemaps for items and other stuff
+        
     }
 
     create ()
@@ -28,6 +28,7 @@ export class GuiScene extends Phaser.Scene {
         progressBox.fillRect(this.progressLocX, this.progressLocY, this.progressLocX + 310, this.progressLocY + 40);
         progressBar.fillStyle(0xffffff, 1);
         progressBar.fillRect(this.progressLocX + 10, this.progressLocY + 10, this.peaceFulness*3, this.progressLocY + 20);
+        let pickedItem = this.add.sprite();
         //  Grab a reference to the Game Scene
         let ourGame = this.scene.get('gameScene');
         console.log("Peace: " + this.peaceFulness)
@@ -39,5 +40,18 @@ export class GuiScene extends Phaser.Scene {
               progressBar.fillStyle(0xffffff, 1);
               progressBar.fillRect(this.progressLocX + 10, this.progressLocY + 10, this.peaceFulness*3 , this.progressLocY + 20);
         }, this);
+        // pick up item - pickUp event
+        ourGame.events.on("pickUp", function (item) {
+              console.log("Picked up. Tilemap: " + item.key + " TileID: " + item.value);
+              this.pickedItem = this.add.sprite(100, 100, item.key, item.value);
+
+
+        }, this);
+        //Place down picked up item - placeDown event
+        ourGame.events.on("placeDown", function () {
+              console.log("Placed down")
+              this.pickedItem.destroy(this);
+        }, this);
+
     }
 }

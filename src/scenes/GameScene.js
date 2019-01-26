@@ -38,7 +38,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('tiles', 'assets/basictiles.png');
+        this.load.spritesheet('tiles', 'assets/basictiles.png',
+                              {frameWidth:  16, frameHeight: 16});
         this.load.spritesheet('characters', 'assets/characters.png',
                               {frameWidth:  16, frameHeight: 16});
     }
