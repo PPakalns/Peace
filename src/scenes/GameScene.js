@@ -20,7 +20,7 @@ function generateMajaBlocks(dynamicLayer) {
     ]
     dynamicLayer.setCollisionBetween(1, 15 * 8)
     dynamicLayer.setCollision([4, 2, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-                               75, 76, 67, 52, 53, 60], false)
+                               75, 76, 67, 52, 53, 60, 70, 69, 29], false)
 
     for (let i = 0; i < 1500; i++)
     {
@@ -95,7 +95,8 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.e.enemiesGroup, this.e.enemiesGroup)
         this.physics.add.collider(this.e.enemiesGroup, this.e.player.getObject())
 
-        this.timedEvent = this.time.delayedCall(1000, this.setupEnemies, [], this)
+        //this.timedEvent = this.time.delayedCall(1000, this.setupEnemies, [], this)
+        this.setupEnemies()
     }
 
     setupEnemies() {
