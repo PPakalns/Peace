@@ -41,11 +41,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('tiles', 'assets/basictiles.png',
-                              {frameWidth:  16, frameHeight: 16, startFrame: 0});
-        this.load.spritesheet('characters', 'assets/characters.png',
-                              {frameWidth:  16, frameHeight: 16});
-        this.load.tilemapTiledJSON('tilemap', 'assets/untitled.json');
     }
 
     create() {

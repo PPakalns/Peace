@@ -7,6 +7,11 @@ export class MenuScene extends Phaser.Scene {
     preload() {
         this.load.image('Start_button', 'assets/Start_button.png')
         this.load.image('background','assets/background.png')
+        this.load.spritesheet('tiles', 'assets/basictiles.png',
+                              {frameWidth:  16, frameHeight: 16, startFrame: 0});
+        this.load.spritesheet('characters', 'assets/characters.png',
+                              {frameWidth:  16, frameHeight: 16});
+        this.load.tilemapTiledJSON('tilemap', 'assets/untitled.json');
     }
 
     create() {
