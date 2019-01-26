@@ -31,6 +31,7 @@ export class MenuScene extends Phaser.Scene {
 
         }, this);
     }
+
     update() {
       if (this.enter.isDown) {
           console.log('game start');

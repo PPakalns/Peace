@@ -89,45 +89,51 @@ export class Player extends Entity{
         this.scene.events.emit('peacefulness', this.peacefulness)
     }
 
-    _pickup(dynamicLayer) {
+    _pickup(dynamicLayer, carpetLayer) {
         let pickupSides = DIRECTION_OFFSET[this.lastDirection]
                           .concat([[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]])
+        let layers = [dynamicLayer, carpetLayer]
         let validPickup = null
-        for (let i = 0; i < pickupSides.length; i++)
+
+        for (let i = 0; i < pickupSides.length && validPickup == null; i++)
         {
-            let [tx, ty] = this.getTileCoords(dynamicLayer)
-            tx += pickupSides[i][0]
-            ty += pickupSides[i][1]
-            let tile = dynamicLayer.getTileAt(tx, ty)
-            if (!tile) {
-                continue
+            for (let layer of layers)
+            {
+                let [tx, ty] = this.getTileCoords(layer)
+                tx += pickupSides[i][0]
+                ty += pickupSides[i][1]
+                let tile = layer.getTileAt(tx, ty)
+                if (!tile) {
+                    continue
+                }
+                validPickup = [layer, tx, ty]
+                break
             }
-            validPickup = [tx, ty]
-            break
         }
 
         if (validPickup)
         {
             // Pickup item
-            const [tileX, tileY] = validPickup
-            let tile = dynamicLayer.removeTileAt(tileX, tileY)
-            this.pickedUp = tile.index
-            this.scene.events.emit("pickUp", {key: 'tiles', value: this.pickedUp})
-            console.log("Picked up item", this.pickedUp)
+            const [layer, tileX, tileY] = validPickup
+            let tile = layer.removeTileAt(tileX, tileY)
+            this.pickedUp = { layer, index: tile.index }
+            this.scene.events.emit("pickUp", {key: 'tiles', value: this.pickedUp.index})
+            console.log("Picked up item", this.pickedUp.index)
         }
     }
 
-    _putdown(dynamicLayer) {
+    _putdown() {
         let dirOffset = DIRECTION_OFFSET[this.lastDirection][0]
-        let [tileX, tileY] = this.getTileCoords(dynamicLayer)
+        const {layer, index} = this.pickedUp
+        let [tileX, tileY] = this.getTileCoords(layer)
         tileX += dirOffset[0]
         tileY += dirOffset[1]
 
-        let tileAt = dynamicLayer.getTileAt(tileX, tileY)
+        let tileAt = layer.getTileAt(tileX, tileY)
 
         if (tileAt == null)
         {
-            dynamicLayer.putTileAt(this.pickedUp, tileX, tileY)
+            layer.putTileAt(index, tileX, tileY)
             this.pickedUp = null;
             this.scene.events.emit("placeDown")
         }
@@ -169,27 +175,13 @@ export class Player extends Entity{
         this.animation_name = animation_name
     }
 
-    _processPeacefulness(delta, enemies, dynamicLayer) {
+
+    _processPeacefulnessBlocks(deltaSec, layer) {
         let pos = this.getPosition()
         let deltaChange = 0
-        let deltaSec = delta / 1000
-
-        let removeScale = 2 * deltaSec
-
-        for (let enemy of enemies)
-        {
-            let dist = enemy.getPosition().subtract(pos).length()
-            let maxDist = 6 * 16
-            if (dist > maxDist) {
-                continue
-            }
-            let value = (maxDist - dist) / maxDist
-            deltaChange += -(value * removeScale)
-        }
-
         let addScale = 2 * deltaSec
         let MAX_BLOCK_RADIUS = 5
-        for (let block of getBlocksInRadius(this, dynamicLayer, MAX_BLOCK_RADIUS))
+        for (let block of getBlocksInRadius(this, layer, MAX_BLOCK_RADIUS))
         {
             let dist = (new Phaser.Math.Vector2(block.getCenterX(), block.getCenterY()))
                                        .subtract(pos).length()
@@ -200,21 +192,43 @@ export class Player extends Entity{
             let value = (maxDist - dist) / maxDist
             deltaChange += (value * addScale)
         }
+        return deltaChange
+    }
+
+    _processPeacefulness(delta, enemies, dynamicLayer, carpetLayer) {
+        let pos = this.getPosition()
+        let deltaChange = 0
+        let deltaSec = delta / 1000
+
+        let removeScale = 4 * deltaSec
+        let maxEnemyDist = 6 * 16
+        for (let enemy of enemies)
+        {
+            let dist = enemy.getPosition().subtract(pos).length()
+            if (dist > maxEnemyDist) {
+                continue
+            }
+            let value = (maxEnemyDist - dist) / maxEnemyDist
+            deltaChange += -(value * removeScale)
+        }
+
+        deltaChange += this._processPeacefulnessBlocks(deltaSec, dynamicLayer)
+        deltaChange += this._processPeacefulnessBlocks(deltaSec, carpetLayer)
         this.addPeacefulness(deltaChange)
     }
 
-    update(delta, dynamicLayer, enemies) {
+    update(delta, dynamicLayer, carpetLayer, enemies) {
         this._processMovement()
-        this._processPeacefulness(delta, enemies, dynamicLayer)
+        this._processPeacefulness(delta, enemies, dynamicLayer, carpetLayer)
 
         // Pickup, putdown item
         if (this.cursors.space.isDown &&
             this.cursors.space.timeDown != this.lastSpaceDown) { // simulate ondown
             this.lastSpaceDown = this.cursors.space.timeDown;
             if (this.pickedUp == null) {
-                this._pickup(dynamicLayer)
+                this._pickup(dynamicLayer, carpetLayer)
             } else {
-                this._putdown(dynamicLayer)
+                this._putdown()
             }
         }
     }

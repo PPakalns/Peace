@@ -82,31 +82,34 @@ export class Enemy extends Entity{
         this.peacefulness = Math.max(0, Math.min(this.peacefulness, 100))
     }
 
-    _updatePeacefulness(delta, dynamicLayer) {
+    _updatePeacefulness(delta, dynamicLayer, carpetLayer) {
         let pos = this.getPosition()
         let deltaSec = delta / 1000
         let deltaChange = -1 * deltaSec
 
         let addScale = 1 * deltaSec
         let MAX_BLOCK_RADIUS = 5
-        for (let block of getBlocksInRadius(this, dynamicLayer, MAX_BLOCK_RADIUS))
-        {
-            let dist = (new Phaser.Math.Vector2(block.getCenterX(), block.getCenterY()))
-                                       .subtract(pos).length()
-            let maxDist = MAX_BLOCK_RADIUS * 16
-            if (dist > maxDist) {
-                continue
+        let layers = [dynamicLayer, carpetLayer]
+        for (let layer of layers) {
+            for (let block of getBlocksInRadius(this, layer, MAX_BLOCK_RADIUS))
+            {
+                let dist = (new Phaser.Math.Vector2(block.getCenterX(), block.getCenterY()))
+                                           .subtract(pos).length()
+                let maxDist = MAX_BLOCK_RADIUS * 16
+                if (dist > maxDist) {
+                    continue
+                }
+                let value = (maxDist - dist) / maxDist
+                deltaChange += (value * addScale)
             }
-            let value = (maxDist - dist) / maxDist
-            deltaChange += (value * addScale)
         }
         this.addPeacefulness(deltaChange)
     }
 
-    update(delta, playerEntity, dynamicLayer) {
+    update(delta, playerEntity, dynamicLayer, carpetLayer) {
         let playerPos = playerEntity.getPosition()
 
-        this._updatePeacefulness(delta, dynamicLayer)
+        this._updatePeacefulness(delta, dynamicLayer, carpetLayer)
         this.updateGood()
 
         let pos = this.getPosition()

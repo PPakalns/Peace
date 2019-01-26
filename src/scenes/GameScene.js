@@ -14,8 +14,7 @@ function create2DArray(n, m, defaultVal = 0) {
 }
 
 
-function generateBlocks(scene, dynamicLayer)
-{
+function generateMajaBlocks(dynamicLayer) {
     let objects = [
         1, 3, 5, 7, 52, 53, 55, 56
     ]
@@ -23,7 +22,7 @@ function generateBlocks(scene, dynamicLayer)
     dynamicLayer.setCollision([4, 2, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
                                75, 76, 67, 52, 53, 60], false)
 
-    for (let i = 0; i < 2000; i++)
+    for (let i = 0; i < 1800; i++)
     {
         let x, y
         do {
@@ -32,6 +31,23 @@ function generateBlocks(scene, dynamicLayer)
         } while (dynamicLayer.getTileAt(x, y) != null);
 
         dynamicLayer.putTileAt(Phaser.Math.RND.weightedPick(objects), x, y)
+    }
+}
+
+function generatePaklajiBlocks(layer) {
+    let objects = [
+        83, 84, 85, 86, 9, 10, 17, 18
+    ]
+
+    for (let i = 0; i < 1000; i++)
+    {
+        let x, y
+        do {
+            x = Phaser.Math.RND.between(0, layer.tilemap.width - 1)
+            y = Phaser.Math.RND.between(0, layer.tilemap.height - 1)
+        } while (layer.getTileAt(x, y) != null);
+
+        layer.putTileAt(Phaser.Math.RND.weightedPick(objects), x, y)
     }
 }
 
@@ -54,8 +70,10 @@ export class GameScene extends Phaser.Scene {
         let tileset = map.addTilesetImage('test', 'tiles')
         let layer = map.createStaticLayer('Karte', tileset)
         let videjaisLayer = map.createStaticLayer('Videjais', tileset)
+        let carpetLayer = map.createDynamicLayer('Paklaji', tileset)
         let dynamicLayer = map.createDynamicLayer('Maja', tileset)
-        generateBlocks(this, dynamicLayer)
+        generateMajaBlocks(dynamicLayer)
+        generatePaklajiBlocks(carpetLayer)
 
         this.cameras.main.setZoom(2)
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
@@ -65,7 +83,7 @@ export class GameScene extends Phaser.Scene {
             player: new Player(this, 261 * 16, 181 * 16),
             map,
             dynamicLayer,
-
+            carpetLayer,
             // Holds enemies
             enemies: [],
             enemiesGroup: this.physics.add.group()
@@ -98,10 +116,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        this.e.player.update(delta, this.e.dynamicLayer, this.e.enemies)
+        this.e.player.update(delta, this.e.dynamicLayer, this.e.carpetLayer, this.e.enemies)
         for (let enemy of this.e.enemies)
         {
-            enemy.update(delta, this.e.player, this.e.dynamicLayer)
+            enemy.update(delta, this.e.player, this.e.dynamicLayer, this.e.carpetLayer)
         }
     }
 }
