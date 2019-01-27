@@ -5,7 +5,7 @@ import { MenuScene } from './scenes/MenuScene';
 import { GuiScene } from './scenes/GuiScene';
 
 var gameConfig = {
-    width: 1000,
+    width: 1080,
     height: 600,
     pixelArt: true,
     physics: {
