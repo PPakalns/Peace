@@ -69,12 +69,20 @@ export class Enemy extends Entity{
         this.peacefulness = 0;
     }
 
-    updateGood() {
+    updateGood(enemiesGroup, goodGroup) {
         if (this.peacefulness > 60) {
+            if (this.good == false) {
+                enemiesGroup.remove(this.entity)
+                goodGroup.add(this.entity)
+            }
             this.good = true;
             this.speed = this.GirlSpeed;
         }
         if (this.peacefulness < 40) {
+            if (this.good == true) {
+                goodGroup.remove(this.entity)
+                enemiesGroup.add(this.entity)
+            }
             this.good = false;
             this.speed = this.SkullSpeed
         }
@@ -109,11 +117,11 @@ export class Enemy extends Entity{
         this.addPeacefulness(deltaChange)
     }
 
-    update(delta, playerEntity, dynamicLayer, carpetLayer) {
+    update(delta, playerEntity, dynamicLayer, carpetLayer, enemiesGroup, goodGroup) {
         let playerPos = playerEntity.getPosition()
 
         this._updatePeacefulness(delta, dynamicLayer, carpetLayer)
-        this.updateGood()
+        this.updateGood(enemiesGroup, goodGroup)
 
         let pos = this.getPosition()
         let diff = playerPos.clone().subtract(pos).normalize().scale(this.speed)

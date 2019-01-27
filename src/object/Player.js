@@ -69,8 +69,7 @@ export class Player extends Entity{
         this.entity.body.setSize(4, 4)
         this.entity.body.setOffset(6, 12)
         this.entity.setDepth(1)
-        this.normalSpeed = 100
-        this.speed = this.normalSpeed
+        this.speed = 100
 
         // Setup animation
         this.cursors = scene.input.keyboard.createCursorKeys()
@@ -123,16 +122,19 @@ export class Player extends Entity{
         }
     }
 
-    _putdown() {
+    _putdown(wallLayer) {
         let dirOffset = DIRECTION_OFFSET[this.lastDirection][0]
         const {layer, index} = this.pickedUp
         let [tileX, tileY] = this.getTileCoords(layer)
         tileX += dirOffset[0]
         tileY += dirOffset[1]
 
+        // Make sure that wall is not placed
+        // if placing carpet it can not be placed under wall, wall can be placed on it
+        let tileAtWallLayer = wallLayer.getTileAt(tileX, tileY)
         let tileAt = layer.getTileAt(tileX, tileY)
 
-        if (tileAt == null)
+        if (tileAt == null && tileAtWallLayer == null)
         {
             layer.putTileAt(index, tileX, tileY)
             this.pickedUp = null;
@@ -140,8 +142,7 @@ export class Player extends Entity{
         }
     }
 
-    _processMovement(delta) {
-        let deltaSec = delta / 1000
+    _processMovement() {
         let isStill = true
 
         let velocity = new Phaser.Math.Vector2(0, 0)
@@ -167,12 +168,6 @@ export class Player extends Entity{
             this.lastDirection = 'down'
         }
 
-        if (this.cursors.shift.isDown) {
-          this.speed = 150
-          this.addPeacefulness(deltaSec * -5)
-        } else {
-          this.speed = this.normalSpeed
-        }
         velocity.normalize().scale(this.speed)
         this.entity.setVelocity(velocity.x, velocity.y)
 
@@ -208,13 +203,10 @@ export class Player extends Entity{
         let deltaChange = 0
         let deltaSec = delta / 1000
 
-        let removeScale = 3 * deltaSec
-        let maxEnemyDist = 9 * 16
+        let removeScale = 4 * deltaSec
+        let maxEnemyDist = 6 * 16
         for (let enemy of enemies)
         {
-            if (enemy.good){
-              continue
-            }
             let dist = enemy.getPosition().subtract(pos).length()
             if (dist > maxEnemyDist) {
                 continue
@@ -229,7 +221,7 @@ export class Player extends Entity{
     }
 
     update(delta, dynamicLayer, carpetLayer, enemies) {
-        this._processMovement(delta)
+        this._processMovement()
         this._processPeacefulness(delta, enemies, dynamicLayer, carpetLayer)
 
         // Pickup, putdown item
@@ -239,7 +231,7 @@ export class Player extends Entity{
             if (this.pickedUp == null) {
                 this._pickup(dynamicLayer, carpetLayer)
             } else {
-                this._putdown()
+                this._putdown(dynamicLayer)
             }
         }
     }

@@ -86,7 +86,8 @@ export class GameScene extends Phaser.Scene {
             carpetLayer,
             // Holds enemies
             enemies: [],
-            enemiesGroup: this.physics.add.group()
+            enemiesGroup: this.physics.add.group(),
+            goodGroup: this.physics.add.group(),
         }
 
         this.cameras.main.startFollow(this.e.player.getObject(), true, 0.1, 0.1)
@@ -94,6 +95,8 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.e.enemiesGroup, dynamicLayer)
         this.physics.add.collider(this.e.enemiesGroup, this.e.enemiesGroup)
         this.physics.add.collider(this.e.enemiesGroup, this.e.player.getObject())
+        this.physics.add.collider(this.e.goodGroup, dynamicLayer)
+        this.physics.add.collider(this.e.goodGroup, this.e.player.getObject())
 
         //this.timedEvent = this.time.delayedCall(1000, this.setupEnemies, [], this)
         this.setupEnemies()
@@ -120,7 +123,8 @@ export class GameScene extends Phaser.Scene {
         this.e.player.update(delta, this.e.dynamicLayer, this.e.carpetLayer, this.e.enemies)
         for (let enemy of this.e.enemies)
         {
-            enemy.update(delta, this.e.player, this.e.dynamicLayer, this.e.carpetLayer)
+            enemy.update(delta, this.e.player, this.e.dynamicLayer, this.e.carpetLayer,
+                                this.e.enemiesGroup,  this.e.goodGroup)
         }
     }
 }
