@@ -1,6 +1,6 @@
 # Peace
 
-## [Game trailer](https://drive.google.com/file/d/1Yl0OsfbmaNHTScz5tqKjWoH3TlVX7mlt/view)
+## [Game trailer](https://youtu.be/iXbkOor-aJg)
 
 ## [Global Game Jam 2019 page](https://globalgamejam.org/2019/games/peace)
 
